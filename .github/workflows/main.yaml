@@ -25,7 +25,10 @@ jobs:
     #   uses: gerred/actions/current-time@master
     #   id: current-time
 
-
+    - name: Change uppercase strings to lowercase for Docker
+      run: |
+        awk 'BEGIN{printf("%s", "::set-env name=REPOSITORY_LOWERCASE::");print tolower("${{ github.repository }}")}'
+        echo ${GITHUB_REF#refs/heads/} | awk 'BEGIN{printf("%s", "::set-env name=BRANCH_LOWERCASE::")} {print tolower($0)}'
     # - name: Docker login
     #   uses: actions/docker/login@master
     #   env:
@@ -39,9 +42,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ github.repository }}
-        tags: ${{ github.ref }}-continuous-${{ github.run_number }}
-        tag_with_ref: true
+        repository: ${{ env.REPOSITORY_LOWERCASE }}
+        tags: ${{ env.BRANCH_LOWERCASE }}-continuous-${{ github.run_number }}, ${{ env.BRANCH_LOWERCASE }}
         tag_with_sha: true
         push: true
         add_git_labels: true
