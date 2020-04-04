@@ -9,22 +9,28 @@ import sys
 def push_prices():
 
     # Grab prices
-    item_prices = requests.get(
+    raw_prices = requests.get(
         "https://storage.googleapis.com/osb-exchange/summary.json")
-    logging.info(item_prices.text)
+    logging.debug(raw_prices.text)
+
+    items = list(raw_prices.json().values())
 
     # Post list to server
     try:
-        requests.post("http://{}/items".format(os.environ.get("RUNESCRAPE_SERVICE", "httpbin.org/post")), json=item_prices.text)
-        # r = requests.post("http://{}/items".format(os.environ["RUNESCRAPE_SERVICE"]),
-        #                   json=json.dumps(item_price_json))
+        r = requests.post("http://{}/items".format(os.environ.get(
+            "RUNESCRAPE_SERVICE", "httpbin.org/post")), json=items)
+        logging.info(r.text)
     except requests.exceptions.ConnectionError:
-        print("connection error")
+        logging.error("connection error")
         pass
 
 
 logging.basicConfig(stream=sys.stdout, level=os.environ.get("LOG_LEVEL", 20))
 schedule.every(5).minutes.do(push_prices)
+print(os.environ.get("RUNESCRAPE_SERVICE"))
 while True:
     schedule.run_pending()
     time.sleep(5)
+
+
+push_prices()
