@@ -27,7 +27,6 @@ def push_prices():
 
 logging.basicConfig(stream=sys.stdout, level=os.environ.get("LOG_LEVEL", 20))
 schedule.every(5).minutes.do(push_prices)
-print(os.environ.get("RUNESCRAPE_SERVICE"))
 while True:
     schedule.run_pending()
     time.sleep(5)
