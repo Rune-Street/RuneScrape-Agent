@@ -4,9 +4,10 @@ RUN adduser -D -g '' runescrape
 WORKDIR /home/runescrape
 USER runescrape
 
-COPY requirements.txt /tmp
-RUN pip3 install --no-warn-script-location -r /tmp/requirements.txt
+ENV PATH="/home/runescrape/.local/bin:${PATH}"
+COPY --chown=runescrape:runescrape requirements.txt /tmp
+RUN pip3 install --user -r /tmp/requirements.txt
 
-COPY runescrape-agent .
+COPY --chown=runescrape:runescrape runescrape-agent runescrape-agent
 
 CMD python3 runescrape-agent/agent.py
