@@ -1,11 +1,18 @@
-import schedule
+from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
-import time
 import os
 import logging
 import sys
 
 
+logging.basicConfig(stream=sys.stdout, level=os.environ.get(
+    "LOG_LEVEL", 20), format='%(asctime)s %(levelname)-8s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
+sched = BlockingScheduler()
+logging.info("Scheduler started")
+
+
+@sched.scheduled_job('cron', minute='*/5')
 def push_prices():
 
     # Grab prices
@@ -25,11 +32,4 @@ def push_prices():
         pass
 
 
-logging.basicConfig(stream=sys.stdout, level=os.environ.get("LOG_LEVEL", 20))
-schedule.every(5).minutes.do(push_prices)
-while True:
-    schedule.run_pending()
-    time.sleep(5)
-
-
-push_prices()
+sched.start()
