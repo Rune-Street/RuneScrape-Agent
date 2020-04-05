@@ -24,8 +24,10 @@ def push_prices():
 
     # Post list to server
     try:
-        r = requests.post("http://{}/items".format(os.environ.get(
-            "RUNESCRAPE_SERVICE", "httpbin.org/post")), json=items)
+        r = requests.post("http://{host}/{endpoint}}".format(host=os.environ.get(
+            "RUNESCRAPE_SERVICE", "httpbin.org"), endpoint=os.environ.get(
+                "RUNESCRAPE_ENDPOINT", "/post")), json=items)
+
         logging.info(r.text)
     except requests.exceptions.ConnectionError:
         logging.error("connection error")
