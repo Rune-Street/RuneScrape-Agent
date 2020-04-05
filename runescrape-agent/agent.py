@@ -24,7 +24,7 @@ def push_prices():
 
     # Post list to server
     try:
-        r = requests.post("http://{host}/{endpoint}}".format(host=os.environ.get(
+        r = requests.post("http://{host}/{endpoint}".format(host=os.environ.get(
             "RUNESCRAPE_SERVICE", "httpbin.org"), endpoint=os.environ.get(
                 "RUNESCRAPE_ENDPOINT", "/post")), json=items)
 
