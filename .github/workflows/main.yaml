@@ -12,6 +12,8 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    # Skips CI on commit message 'push', '***NO_CI***', '[ci skip]', or [skip ci]
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -21,21 +23,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # - name: Get current time
-    #   uses: gerred/actions/current-time@master
-    #   id: current-time
-
     - name: Change uppercase strings to lowercase for Docker
       run: |
         awk 'BEGIN{printf("%s", "::set-env name=REPOSITORY_LOWERCASE::");print tolower("${{ github.repository }}")}'
         echo ${GITHUB_REF#refs/heads/} | awk 'BEGIN{printf("%s", "::set-env name=BRANCH_LOWERCASE::")} {print tolower($0)}'
-    # - name: Docker login
-    #   uses: actions/docker/login@master
-    #   env:
-    #     DOCKER_REGISTRY_URL: "registry.hub.docker.com"
-    #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-    #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      # if: success()
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v1.0.1
@@ -47,8 +38,3 @@ jobs:
         tag_with_sha: true
         push: true
         add_git_labels: true
-
-    # - name: Docker build
-    #   uses: actions/docker/cli@master
-    #   with:
-    #     args: "build -t ${{ github.repository }}:${{ github.ref }}-continuous-${{ github.run_number }} -t ${{ github.repository }}:${{ github.ref }}-${{ steps.current-time.outputs.time }}  -t ${{ github.repository }}:${{ github.ref }}:${{ github.sha }} ."
