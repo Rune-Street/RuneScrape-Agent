@@ -25,7 +25,7 @@ jobs:
 
     - name: Change uppercase strings to lowercase for Docker
       run: |
-        awk 'BEGIN{printf("%s", "::set-env name=REPOSITORY_LOWERCASE::");print tolower("${{ github.repository }}")}'
+        echo ${GITHUB_REPOSITORY} | cut -d / -f 2 | awk 'BEGIN{printf("%s", "::set-env name=REPOSITORY_LOWERCASE::iexalt/")} {print tolower($0)}'
         echo ${GITHUB_REF#refs/heads/} | awk 'BEGIN{printf("%s", "::set-env name=BRANCH_LOWERCASE::")} {print tolower($0)}'
 
     - name: Build and push Docker image
