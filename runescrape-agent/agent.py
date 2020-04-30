@@ -1,9 +1,10 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
-import requests
-import os
 import logging
+import os
 import sys
 
+import requests
+
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 logging.basicConfig(stream=sys.stdout, level=os.environ.get(
     "LOG_LEVEL", 20), format='%(asctime)s %(levelname)-8s %(message)s',
@@ -24,9 +25,10 @@ def push_prices():
 
     # Post list to server
     try:
-        r = requests.post("http://{host}/{endpoint}".format(host=os.environ.get(
+        r = requests.post("http://{host}:{port}/{endpoint}".format(host=os.environ.get(
             "RUNESCRAPE_SERVICE", "httpbin.org"), endpoint=os.environ.get(
-                "RUNESCRAPE_ENDPOINT", "/post")), json=items)
+                "RUNESCRAPE_ENDPOINT", "/post"), port=os.environ.get(
+                    "RUNESCRAPE_PORT", "80")), json=items)
 
         logging.info(r.text)
     except requests.exceptions.ConnectionError:
