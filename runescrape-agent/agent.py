@@ -31,6 +31,7 @@ def push_prices():
                     "RUNESCRAPE_PORT", "80")), json=items)
 
         logging.info(r.text)
+        logging.info(r.headers.get("Server-Timing", "Couldn't get server timing"))
     except requests.exceptions.ConnectionError:
         logging.error("connection error")
         pass
