@@ -18,7 +18,7 @@ def push_prices():
 
     # Grab prices
     raw_prices = requests.get(
-        "https://storage.googleapis.com/osb-exchange/summary.json")
+        "https://rsbuddy.com/exchange/summary.json")
     logging.debug(raw_prices.text)
 
     items = list(raw_prices.json().values())
